@@ -23,14 +23,10 @@ const corsOptions = {
     },
     methods: ["GET", "POST", "OPTIONS"],
     credentials: true
-
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
-
-// This will handle the preflight requests
-app.options('*', cors(corsOptions));
+app.options('*', cors(corsOptions)); // Handle preflight requests
 
 app.use(express.json());
 
@@ -65,7 +61,6 @@ app.post("/api/predict-fertilizer", async (req, res) => {
 // Crop Recommendation Endpoint
 app.post("/api/predict-crop", async (req, res) => {
     console.log("📥 /api/predict-crop endpoint hit", req.body);
-
     const { temp, humidity, ph, rainfall, N, P, K } = req.body;
 
     try {
@@ -91,7 +86,6 @@ app.post("/api/predict-crop", async (req, res) => {
 // Chatbase chatbot route
 app.post("/api/chatbase", async (req, res) => {
     const { message } = req.body;
-
     try {
         const response = await fetch("https://www.chatbase.co/api/v1/chat", {
             method: "POST",
@@ -107,7 +101,6 @@ app.post("/api/chatbase", async (req, res) => {
 
         const data = await response.json();
         console.log("🔁 Chatbase Response:", data);
-
         res.status(200).json(data);
     } catch (err) {
         console.error("❌ Chatbase API error:", err);
@@ -123,4 +116,11 @@ app.get("/api", (req, res) => {
     res.send("✅ KisaanSeva backend is running!");
 });
 
+// This is important for Vercel
 export default app;
+
+// This is for local development
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});
